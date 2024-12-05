@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const sql = require("mssql")
 
 require("dotenv").config()
@@ -16,6 +17,8 @@ const sqlConfig = {
         trustServerCertificate: true
     }
 }
+
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
