@@ -16,22 +16,19 @@ const options = {
 // Runs on every authenticated route, the async() function is the verify
 const strategy = new JwtStrategy(options, async (jwt_payload, done) => {
     let user = null
-    const request = new sql.Request()
 
     // TODO: Replace query with actual SQL command 
     try {
-        user = await request.query(`select * from users where ID=${jwt_payload.ID}`)
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAA")
-        console.log(user.recordset[0])
+        // dont ask
+        user = await (await new sql.Request().query(`select * from users where ID=${parseInt(jwt_payload.id)}`)).recordset[0]
+        // console.log(user)
     }
     catch (err) {
         console.log(err)
     }
 
-
     // If user exists, return user
-    if (!user) {
-        // cannot read properties of null, reading recordset
+    if (user) {
         done(null, user)
     }
     else {
