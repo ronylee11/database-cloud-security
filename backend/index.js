@@ -2,19 +2,29 @@ const express = require('express');
 const cors = require('cors');
 const sql = require("mssql")
 const passport = require("passport")
+const { strategy } = require("./utils/passport")
 
 require("dotenv").config()
 
-const userRouter = require("./routes/users")
-const authRouter = require("./routes/auth")
-
+const indexRouter = require("./routes/index.routes");
+const { errorConverter, errorHandler } = require('./utils/error');
 
 const app = express();
 const port = 3001;
 
 app.use(express.json())
-require("./utils/passport")
 app.use(passport.initialize());
+passport.use(strategy)
+app.use(cors());
+app.use("/api", indexRouter)
+
+app.get('/health', (req, res) => {
+  return res.json({ status: 'UP' });
+});
+
+// Error handlers so that the app doesnt crash everytime an error gets thrown
+app.use(errorConverter)
+app.use(errorHandler)
 
 const sqlConfig = {
     server: process.env.VM_SERVER_IP,
@@ -27,37 +37,6 @@ const sqlConfig = {
     }
 }
 
-app.use(cors());
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-app.get("/abcde", async (request, response) => {
-    try {
-        // create new request
-        const request = new sql.Request();
-
-        const result = await request.query("select SUSER_NAME()");
-        console.log(typeof(result))
-        response.send(result.recordset);
-        console.dir(result.recordset);
-    } catch (err) {
-        console.error("Error executing query:", err);
-        response.status(500).send("Error executing query");
-    }
-});
-
-app.get('/health', (req, res) => {
-  return res.json({ status: 'UP' });
-});
-
-
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
-
-
 sql.connect(sqlConfig, err => {
     if (err) {
         throw err;
@@ -65,5 +44,6 @@ sql.connect(sqlConfig, err => {
     console.log("Connection Successful!");
 });
 
-app.use("/auth", authRouter)
-app.use("/users", userRouter)
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
+});

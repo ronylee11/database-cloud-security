@@ -3,38 +3,33 @@ const jwt = require("jsonwebtoken")
 const sql = require("mssql")
 const { ApiError } = require("../utils/ApiError")
 const { StatusCodes } = require("http-status-codes")
-const bcrypt = require("bcrypt")
+const asyncHandler = require("express-async-handler")
 
-const loginUser = async(req, res) => {
+const loginUser = asyncHandler(async(req, res) => {
     let user = null
     const request = new sql.Request()
+    // select * FROM USERS WHERE ID=1
 
-    username = req.body.username
-    password = req.body.password
-    // console.log(req.body)
+// DECLARE @HASH NVARCHAR(32);
+// set @HASH = CONVERT(NVARCHAR(32),'Wick')
+// select HASHBYTES('SHA2_512', CONVERT(NVARCHAR(32),'Wick')) = HASH
     
     // TODO: Replace query with actual SQL command 
     // TODO: Compare hash instead of password directly
     // query parameterization be damned i wanna make this as vulnerable as possible
-    try {
-        user = await request.query(`select * from users where username='${req.body.username}' AND password='${req.body.password}'`)
-        // dont ask
-        console.log(user.recordset[0].ID)
-    }
-    catch (err) {
-        // throw new ApiError(StatusCodes.NOT_FOUND, "Incorrect email or password")
-    }
     
-
-    // if (!user) {
-    //     throw new ApiError(
-    //         StatusCodes.NOT_FOUND,
-    //         "Incorrect email or password"
-    //     )
-    // }
+    // double awaits because its awesome
+    user = await (await request.query(`select * from users where username='${req.body.username}' AND password='${req.body.password}'`)).recordset[0]
+    
+    if (!user) {
+        throw new ApiError(
+            StatusCodes.NOT_FOUND,
+            "Incorrect email or password",
+        )
+    }
 
     const token = jwt.sign(
-        {id: user.recordset[0].ID},
+        {id: user.ID},
         process.env.JWT_SECRET,
         { expiresIn: "1h"}
     )
@@ -43,13 +38,9 @@ const loginUser = async(req, res) => {
     res.json({
         token,
     })
-}
+})
 
-const test = async(req, res) => {
-    res.send('Hello World!');
-}
 
 module.exports = {
     loginUser,
-    test
 }

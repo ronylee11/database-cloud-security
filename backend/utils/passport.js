@@ -3,7 +3,6 @@ const JwtStrategy = require("passport-jwt").Strategy
 const sql = require("mssql")
 const { ApiError } = require("./ApiError")
 const { StatusCodes } = require("http-status-codes")
-const passport = require("passport")
 require("dotenv").config()
 
 // JWT_SECRET: symmetric key for jwt verification
@@ -17,7 +16,6 @@ const options = {
 const strategy = new JwtStrategy(options, async (jwt_payload, done) => {
     let user = null
 
-    // TODO: Replace query with actual SQL command 
     try {
         // dont ask
         user = await (await new sql.Request().query(`select * from users where ID=${parseInt(jwt_payload.id)}`)).recordset[0]
@@ -36,8 +34,6 @@ const strategy = new JwtStrategy(options, async (jwt_payload, done) => {
     }
 })
 
-passport.use(strategy)
-
 module.exports = {
-    passport
+    strategy
 }
