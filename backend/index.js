@@ -48,6 +48,10 @@ app.get("/abcde", async (request, response) => {
     }
 });
 
+app.get('/health', (req, res) => {
+  return res.json({ status: 'UP' });
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
