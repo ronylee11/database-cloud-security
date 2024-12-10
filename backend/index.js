@@ -1,11 +1,20 @@
 const express = require('express');
 const cors = require('cors');
 const sql = require("mssql")
+const passport = require("passport")
 
 require("dotenv").config()
 
+const userRouter = require("./routes/users")
+const authRouter = require("./routes/auth")
+
+
 const app = express();
 const port = 3001;
+
+app.use(express.json())
+require("./utils/passport")
+app.use(passport.initialize());
 
 const sqlConfig = {
     server: process.env.VM_SERVER_IP,
@@ -29,7 +38,8 @@ app.get("/abcde", async (request, response) => {
         // create new request
         const request = new sql.Request();
 
-        const result = await request.query("select TOP 3 CardID, CardType, ExpMonth, ExpYear, CustomerID FROM dbo.CreditCards");
+        const result = await request.query("select SUSER_NAME()");
+        console.log(typeof(result))
         response.send(result.recordset);
         console.dir(result.recordset);
     } catch (err) {
@@ -51,3 +61,5 @@ sql.connect(sqlConfig, err => {
     console.log("Connection Successful!");
 });
 
+app.use("/auth", authRouter)
+app.use("/users", userRouter)
