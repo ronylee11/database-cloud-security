@@ -17,8 +17,9 @@ const strategy = new JwtStrategy(options, async (jwt_payload, done) => {
     let user = null
 
     try {
-        // dont ask
         user = await (await new sql.Request().query(`select * from users where ID=${parseInt(jwt_payload.id)}`)).recordset[0]
+        delete user.hash
+        delete user.password
         // console.log(user)
     }
     catch (err) {

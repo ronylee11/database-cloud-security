@@ -1,4 +1,3 @@
-const ExtractJwt = require("passport-jwt").ExtractJwt
 const jwt = require("jsonwebtoken")
 const sql = require("mssql")
 const { ApiError } = require("../utils/ApiError")
@@ -8,18 +7,14 @@ const asyncHandler = require("express-async-handler")
 const loginUser = asyncHandler(async(req, res) => {
     let user = null
     const request = new sql.Request()
-    // select * FROM USERS WHERE ID=1
+    const { username, password } = req.body
 
-// DECLARE @HASH NVARCHAR(32);
-// set @HASH = CONVERT(NVARCHAR(32),'Wick')
-// select HASHBYTES('SHA2_512', CONVERT(NVARCHAR(32),'Wick')) = HASH
-    
-    // TODO: Replace query with actual SQL command 
-    // TODO: Compare hash instead of password directly
     // query parameterization be damned i wanna make this as vulnerable as possible
-    
     // double awaits because its awesome
-    user = await (await request.query(`select * from users where username='${req.body.username}' AND password='${req.body.password}'`)).recordset[0]
+    user = await (await request.query(`
+        select * from users where username='${username}' AND 
+        hash=HASHBYTES('SHA2_256', CONVERT(NVARCHAR(32),'${password}'))`)
+    ).recordset[0]
     
     if (!user) {
         throw new ApiError(
