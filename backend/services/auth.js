@@ -27,7 +27,6 @@ const loginUser = [
                 EXEC Application.AccountLogin @Email = '${email}', @Password = '${password}';
             `)
         ).recordset[0]
-        
         if (!user) {
             throw new ApiError(
                 StatusCodes.NOT_FOUND,
@@ -36,7 +35,7 @@ const loginUser = [
         }
 
         const token = jwt.sign(
-            {id: user.ID},
+            {id: user.AccountID},
             process.env.JWT_SECRET,
             { expiresIn: "1h"}
         )
