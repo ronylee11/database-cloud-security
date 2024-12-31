@@ -19,12 +19,38 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("");
   const [password, setPassword] = useState("");
-  const credentials = ["bob@gmail.com", "123"];
+  // const credentials = ["bob@gmail.com", "123"];
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
 
+  async function fetchData(email, password) {
+    try {
+      
+      const response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      })
+
+      const data = await response.json();
+      localStorage.setItem("token", data.token)
+      // retrieve token with const token = localStorage.getItem("token")
+      // console.log(data.token)
+    }
+    catch (err) {
+      console.error(err)
+    }
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    fetchData(email, password)
+    // need help on this one
     if (email == credentials[0] && password == credentials[1]) {
       navigate("/home");
     } else {
