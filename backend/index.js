@@ -10,12 +10,17 @@ const indexRouter = require("./routes/index.routes");
 const { errorConverter, errorHandler } = require('./utils/error');
 
 const app = express();
-const port = 3001;
+const port = 3004;
 
 app.use(express.json())
 app.use(passport.initialize());
 passport.use(strategy)
-app.use(cors());
+app.use(cors({
+    origin:[
+      'http://localhost:5173'
+    ]
+
+  }));
 app.use("/api", indexRouter)
 
 app.get('/health', (req, res) => {
@@ -33,7 +38,8 @@ const sqlConfig = {
     database: process.env.DATABASE,
     port: parseInt(process.env.PORT),
     options: {
-        trustServerCertificate: true
+        trustServerCertificate: true,
+        connectTimeout: 30000
     }
 }
 

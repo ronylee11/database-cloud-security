@@ -26,7 +26,7 @@ const Login = () => {
   async function fetchData(email, password) {
     try {
       
-      const response = await fetch("http://localhost:3001/api/auth/login", {
+      const response = await fetch("http://localhost:3004/api/auth/login", {
         method: "POST",
         headers: { 
           'Content-Type': 'application/json'
@@ -38,24 +38,21 @@ const Login = () => {
       })
 
       const data = await response.json();
-      localStorage.setItem("token", data.token)
-      // retrieve token with const token = localStorage.getItem("token")
-      // console.log(data.token)
-    }
-    catch (err) {
-      console.error(err)
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        navigate("/dashboard");
+      } else {
+        throw new Error(data.message || "Login failed");
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus("failed");
     }
   }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetchData(email, password)
-    // need help on this one
-    if (email == credentials[0] && password == credentials[1]) {
-      navigate("/home");
-    } else {
-      setStatus("failed");
-    }
+    fetchData(email, password);
   };
 
   useEffect(() => {
