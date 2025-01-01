@@ -1,10 +1,9 @@
+-- Create the server audit
 USE master;
 GO
-
--- Create the server audit to store logs in a specified directory.
 CREATE SERVER AUDIT UserActivityAudit
 TO FILE (
-    FILEPATH = 'C:\SQLAudit\',  -- Make sure this path exists and has proper write permissions
+    FILEPATH = 'C:\SQLAudit\',  
     MAXSIZE = 256 MB, 
     MAX_ROLLOVER_FILES = 2147483647, 
     RESERVE_DISK_SPACE = OFF
@@ -15,30 +14,42 @@ WITH (
 );
 GO
 
--- Enable the server audit.
+-- Enable the server audit
 ALTER SERVER AUDIT UserActivityAudit
 WITH (STATE = ON);
 GO
 
--- Move to the target database (BankDB).
+-- Create the server audit specification to log login-related events
+CREATE SERVER AUDIT SPECIFICATION UserLoginAuditSpec
+FOR SERVER AUDIT UserActivityAudit
+ADD (SUCCESSFUL_LOGIN_GROUP),
+ADD (FAILED_LOGIN_GROUP);
+GO
+
+-- Enable the server audit specification
+ALTER SERVER AUDIT SPECIFICATION UserLoginAuditSpec
+WITH (STATE = ON);
+GO
+
+-- Move to the target database (BankDB)
 USE BankDB;
 GO
 
--- Create the database audit specification to track actions on all tables, views, and the specific stored procedure.
+-- Create the database audit specification
 CREATE DATABASE AUDIT SPECIFICATION UserActivityAuditSpec
 FOR SERVER AUDIT UserActivityAudit
--- Track SELECT, INSERT, UPDATE, DELETE on all tables and views in the schema
+-- Track SELECT, INSERT, UPDATE, DELETE on all tables and views in the specified schemas
 ADD (SELECT, INSERT, UPDATE, DELETE ON SCHEMA::Application BY PUBLIC),
 ADD (SELECT, INSERT, UPDATE, DELETE ON SCHEMA::Banking BY PUBLIC),
 ADD (SELECT, INSERT, UPDATE, DELETE ON SCHEMA::Loans BY PUBLIC),
 ADD (SELECT, INSERT, UPDATE, DELETE ON SCHEMA::Transactions BY PUBLIC),
--- Track EXECUTE on the specific stored procedure
+-- Track EXECUTE on specific stored procedures
 ADD (EXECUTE ON OBJECT::usp_GetCustomerInfoById BY PUBLIC),
 ADD (EXECUTE ON OBJECT::Application.AccountLogin BY PUBLIC),
+-- Track other database-level changes
 ADD (DATABASE_ROLE_MEMBER_CHANGE_GROUP),
 ADD (SCHEMA_OBJECT_CHANGE_GROUP),
 ADD (DATABASE_OBJECT_ACCESS_GROUP),
-ADD (DATABASE_ROLE_MEMBER_CHANGE_GROUP),
 ADD (USER_CHANGE_PASSWORD_GROUP)
 WITH (STATE = ON);
 GO
