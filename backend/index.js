@@ -10,7 +10,7 @@ const indexRouter = require("./routes/index.routes");
 const { errorConverter, errorHandler } = require('./utils/error');
 
 const app = express();
-const port = 3004;
+const port = 3005;
 
 app.use(express.json())
 app.use(passport.initialize());

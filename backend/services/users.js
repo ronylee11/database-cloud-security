@@ -46,8 +46,22 @@ const createUser = [
 ]
 
 const checkUserDetails = async(req, res) => {
+    const { customerID } = req.params;
 
-    res.json(req.user)
+    if (!customerID) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Customer ID is required");
+    }
+
+    const request = new sql.Request();
+    request.input("CustomerID", sql.Int, customerID);
+
+    const result = await request.execute("usp_GetCustomerInfoById");
+
+    if (result.recordset.length === 0) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Customer not found");
+    }
+
+    res.status(StatusCodes.OK).json(result.recordset[0]);
 }
 
 module.exports = {
