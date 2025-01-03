@@ -100,8 +100,8 @@ const TermsAndConditions = () => {
             If you have any questions or concerns about our Terms & Conditions or our handling of your personal data, please contact us at:
           </Text>
           <Text>Email: [support@moneytiger.com]</Text>
-          <Text>Phone: [Insert phone number]</Text>
-          <Text>Address: [Insert physical address]</Text>
+          <Text>Phone: [1300888333]</Text>
+          <Text>Address: [123 Main Street, Anytown, USA]</Text>
         </Section>
 
         <Divider mt={6} />
