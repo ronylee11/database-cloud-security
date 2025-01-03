@@ -4,7 +4,7 @@ const { ApiError } = require("../utils/ApiError")
 const { StatusCodes } = require("http-status-codes")
 const asyncHandler = require("express-async-handler")
 
-const { body, matchedData } = require("express-validator")
+const { body, matchedData, param } = require("express-validator")
 const { checkValidatorResults } = require("../utils/validators")
 
 const createUser = [
@@ -45,24 +45,29 @@ const createUser = [
     })
 ]
 
-const checkUserDetails = async(req, res) => {
-    const { customerID } = req.params;
-
-    if (!customerID) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Customer ID is required");
+const checkUserDetails = [
+    param("customerID").isInt().notEmpty(),
+    asyncHandler(async(req, res) => {
+        const { customerID } = req.params;
+        
+        if (parseInt(customerID) !== req.user.id) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "You can only view details of your own account")
+        }
+    
+        const request = new sql.Request();
+        request.input("CustomerID", sql.Int, customerID);
+    
+        const result = await request.execute("usp_GetCustomerInfoById");
+    
+        if (result.recordset.length === 0) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Customer not found");
+        }
+    
+        res.status(StatusCodes.OK).json(result.recordset[0]);
     }
 
-    const request = new sql.Request();
-    request.input("CustomerID", sql.Int, customerID);
-
-    const result = await request.execute("usp_GetCustomerInfoById");
-
-    if (result.recordset.length === 0) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Customer not found");
-    }
-
-    res.status(StatusCodes.OK).json(result.recordset[0]);
-}
+    )
+]
 
 module.exports = {
     checkUserDetails,
