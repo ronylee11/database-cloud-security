@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Flex, Heading, VStack, Box, Spinner, Text } from "@chakra-ui/react";
+import { Flex, Heading, VStack, Box, Spinner, Text, Table, Thead, Tbody, Tfoot, Tr, Th, Td, TableCaption, TableContainer } from "@chakra-ui/react";
 import { jwtDecode } from "jwt-decode";
 const Dashboard = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [authorized, setAuthorized] = useState(false);
     const [userData, setUserData] = useState(null);
+    const [transactionHistory, setTransactionHistory] = useState([]);
 
     useEffect(() => {
         const verifyUser = async () => {
@@ -40,6 +41,22 @@ const Dashboard = () => {
                     } else {
                         console.error("Failed to fetch profile data");
                     }
+                    
+                    // Get transaction data using user ID   
+                    const transactionResponse = await fetch(`http://localhost:3005/api/users/transactions/${userId}`, {
+                        method: "GET",
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+
+                    if (transactionResponse.ok) {
+                        const data = await transactionResponse.json();
+                        // console.log("transaction data", data)
+                        setTransactionHistory(data);
+                    }
+                    else {
+                        console.log("No transaction history")
+                    }
+
                 } else {
                     navigate("/"); // Redirect if unauthorized
                 }
@@ -80,9 +97,35 @@ const Dashboard = () => {
                         <Text>Account Type: {userData.AccountType}</Text>
                     </Box>
                 )}
+        
+                <TableContainer>
+                    <Table variant='striped'>
+                        <TableCaption>Past Transactions</TableCaption>
+                        <Thead>
+                            <Tr>
+                                <Th>Sender</Th>
+                                <Th>Receiver</Th>
+                                <Th isNumeric>Amount</Th>
+                                <Th>Transaction Date</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {transactionHistory.length !== 0 && transactionHistory.map((transaction, index) => (
+                                <Tr key={index}>
+                                    <Td>{transaction.SenderName}</Td>
+                                    <Td>{transaction.ReceiverName}</Td>
+                                    <Td isNumeric>{transaction.TransactionAmount.toFixed(2)}</Td>
+                                    <Td>{new Date(transaction.TransactionDate).toLocaleDateString()}</Td>
+                                </Tr>
+                            ))}
+                        </Tbody>
+                    </Table>
+                </TableContainer>
             </VStack>
         </Flex>
-    );
+
+        )
+    ;
 };
 
 export default Dashboard;

@@ -48,6 +48,7 @@ const createUser = [
 const checkUserDetails = [
     param("customerID").isInt().notEmpty(),
     asyncHandler(async(req, res) => {
+        checkValidatorResults(req, res)
         const { customerID } = req.params;
         
         if (parseInt(customerID) !== req.user.id) {
@@ -69,7 +70,30 @@ const checkUserDetails = [
     )
 ]
 
+const getTransactionHistory = [
+    param("customerID").isInt().notEmpty(),
+    asyncHandler(async(req, res) => {
+        checkValidatorResults(req, res)
+        const { customerID } = req.params;
+        
+        if (parseInt(customerID) !== req.user.id) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "You can only view details of your own account")
+        }
+
+        const request = new sql.Request()
+        request.input("CustomerID", sql.Int, customerID)
+        const result = await request.execute("Transactions.GetHistoryByID")
+
+        if (result.recordset.length === 0) {
+            res.status(StatusCodes.NOT_FOUND);
+        }
+
+        res.status(StatusCodes.OK).json(result.recordset);
+    })
+]
+
 module.exports = {
     checkUserDetails,
-    createUser
+    createUser,
+    getTransactionHistory
 }
