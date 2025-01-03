@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Box,
+  Text,
   Button,
   FormControl,
   FormLabel,
@@ -110,6 +111,9 @@ const Login = () => {
               Login
             </Button>
           </form>
+          <Box pt={5} textAlign="center" _hover={{ cursor: "pointer", textDecoration: "underline"}} >
+            <a href="/signup">Don't have an account?</a>
+          </Box>
         </Box>
       </Flex>
     </>
