@@ -8,6 +8,7 @@ import {
   FormErrorMessage,
   FormHelperText,
   Flex,
+  Text,
   useToast,
   Heading,
   Menu,
@@ -142,7 +143,7 @@ const Register = () => {
         min-height="100vh"
       >
         <Box>
-          <Heading mb={5}>Register your Account</Heading>
+          <Text mt={5}>Register your Account</Text>
         </Box>
         <Box minWidth={["300px", "400px"]}>
           <form onSubmit={handleSubmit}>
