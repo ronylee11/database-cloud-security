@@ -138,8 +138,8 @@ const Register = () => {
         alignItems="center"
         justifyContent="center"
         flexDir="column"
-        width="100vw"
-        height="100vh"
+        min-width="100vw"
+        min-height="100vh"
       >
         <Box>
           <Heading mb={5}>Register your Account</Heading>
