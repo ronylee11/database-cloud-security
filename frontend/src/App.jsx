@@ -10,7 +10,7 @@ import ProtectedRoute from './utils/protectedroute'; // Import ProtectedRoute
 function App() {
 
   return (
-    <div className="bg-slate-900 text-slate-300">
+    <>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
@@ -27,7 +27,7 @@ function App() {
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
-    </div>
+    </>
   )
 }
 
