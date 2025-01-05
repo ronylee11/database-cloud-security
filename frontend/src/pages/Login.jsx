@@ -13,6 +13,7 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { DarkModeToggler } from '../components/ui/toggler';
 
 const Login = () => {
   const toast = useToast();
@@ -70,9 +71,6 @@ const Login = () => {
 
   return (
     <>
-      <Flex alignItems="center" justifyContent="center">
-        <Heading mb={-10} p={5}>MoneyTiger</Heading>
-      </Flex>
       <Flex
         alignItems="center"
         justifyContent="center"

@@ -6,11 +6,17 @@ import Dashboard from './pages/Dashboard'
 import TermsAndConditions from './pages/TermsAndConditions'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from './utils/protectedroute'; // Import ProtectedRoute
+import { Flex, Heading } from "@chakra-ui/react";
+import { DarkModeToggler } from './components/ui/toggler';
 
 function App() {
 
   return (
     <>
+    <Flex alignItems="center" justifyContent="center">
+    <Heading mb={-10} p={5}>MoneyTiger</Heading>
+    <DarkModeToggler />
+    </Flex>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />

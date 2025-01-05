@@ -132,9 +132,6 @@ const Register = () => {
 
   return (
     <>
-      <Flex alignItems="center" justifyContent="center">
-        <Heading mb={-10} p={5}>MoneyTiger</Heading>
-      </Flex>
       <Flex
         alignItems="center"
         justifyContent="center"
