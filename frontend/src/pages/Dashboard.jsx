@@ -99,7 +99,7 @@ const Dashboard = () => {
                 )}
         
                 <TableContainer>
-                    <Table variant='striped'>
+                    <Table variant='simple'>
                         <TableCaption>Past Transactions</TableCaption>
                         <Thead>
                             <Tr>

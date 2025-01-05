@@ -141,6 +141,8 @@ const Register = () => {
         flexDir="column"
         min-width="100vw"
         min-height="100vh"
+        width="100vw"
+        height="100vh"
       >
         <Box>
           <Text mt={5}>Register your Account</Text>
