@@ -8,7 +8,7 @@ export const DarkModeToggler = React.forwardRef(
     const { colorMode, toggleColorMode } = useColorMode()
     return (
       <>
-      <Button onClick={toggleColorMode} mt={10} ml={20}>
+      <Button onClick={toggleColorMode}>
       Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
       </Button>
       </>

@@ -12,10 +12,16 @@ import { DarkModeToggler } from './components/ui/toggler';
 function App() {
 
   return (
-    <>
+    <Flex
+        alignItems="center"
+        justifyContent="center"
+        flexDir="column"
+        minHeight="100vh"
+        minWidth="100vw"
+    >
     <Flex alignItems="center" justifyContent="center">
-    <Heading mb={-10} p={5}>MoneyTiger</Heading>
-    <DarkModeToggler />
+    <Heading mt={0} p={5}>MoneyTiger</Heading>
+    <DarkModeToggler mt={0} />
     </Flex>
     <BrowserRouter>
       <Routes>
@@ -33,7 +39,7 @@ function App() {
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
-    </>
+    </Flex>
   )
 }
 

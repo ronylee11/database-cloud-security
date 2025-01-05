@@ -132,17 +132,8 @@ const Register = () => {
 
   return (
     <>
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        flexDir="column"
-        min-width="100vw"
-        min-height="100vh"
-        width="100vw"
-        height="100vh"
-      >
         <Box>
-          <Text mt={5}>Register your Account</Text>
+          <Text>Register your Account</Text>
         </Box>
         <Box minWidth={["300px", "400px"]}>
           <form onSubmit={handleSubmit}>
@@ -242,7 +233,6 @@ const Register = () => {
             </Button>
           </form>
         </Box>
-      </Flex>
     </>
   );
 };

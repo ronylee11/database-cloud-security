@@ -71,15 +71,8 @@ const Login = () => {
 
   return (
     <>
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        flexDir="column"
-        width="100vw"
-        height="100vh"
-      >
-        <Box>
-          <Heading mb={5}>Login</Heading>
+        <Box mt={0} my={5}>
+          <Heading>Login</Heading>
         </Box>
         <Box minWidth={["300px", "400px"]}>
           <form onSubmit={handleSubmit}>
@@ -113,7 +106,6 @@ const Login = () => {
             <a href="/signup">Don't have an account?</a>
           </Box>
         </Box>
-      </Flex>
     </>
   );
 };
