@@ -28,7 +28,7 @@ const Login = () => {
   async function fetchData(email, password) {
     try {
       
-      const response = await fetch("http://localhost:3005/api/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { 
           'Content-Type': 'application/json'

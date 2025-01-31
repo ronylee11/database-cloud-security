@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Flex, Heading, VStack, Box, Spinner, Text, Table, Thead, Tbody, Tfoot, Tr, Th, Td, TableCaption, TableContainer } from "@chakra-ui/react";
 import { jwtDecode } from "jwt-decode";
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Dashboard = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -18,7 +21,7 @@ const Dashboard = () => {
             }
 
             try {
-                const dashboardResponse = await fetch("http://localhost:3005/api/auth/dashboard-data", {
+                const dashboardResponse = await fetch(`${API_BASE_URL}/api/auth/dashboard-data`, {
                     method: "GET",
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -29,7 +32,7 @@ const Dashboard = () => {
                     const userId = decodedToken.id; // Extracting the user ID from the decoded token
 
                     // Fetch user profile data using the decoded user ID
-                    const profileResponse = await fetch(`http://localhost:3005/api/users/profile/${userId}`, {
+                    const profileResponse = await fetch(`${API_BASE_URL}/api/users/profile/${userId}`, {
                         method: "GET",
                         headers: { Authorization: `Bearer ${token}` },
                     });
@@ -43,7 +46,7 @@ const Dashboard = () => {
                     }
                     
                     // Get transaction data using user ID   
-                    const transactionResponse = await fetch(`http://localhost:3005/api/users/transactions/${userId}`, {
+                    const transactionResponse = await fetch(`${API_BASE_URL}/api/users/transactions/${userId}`, {
                         method: "GET",
                         headers: { Authorization: `Bearer ${token}` },
                     });

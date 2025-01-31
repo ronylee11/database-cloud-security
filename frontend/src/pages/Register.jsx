@@ -56,7 +56,7 @@ const Register = () => {
       };
       console.log(json_data);
 
-      const response = await fetch("http://localhost:3005/api/users", {
+      const response = await fetch(`${API_BASE_URL}/api/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
