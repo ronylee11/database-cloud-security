@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken")
-const sql = require("mssql")
+const pool = require("../db")
 const { ApiError } = require("../utils/ApiError")
 const { StatusCodes } = require("http-status-codes")
 const asyncHandler = require("express-async-handler")
@@ -21,12 +21,15 @@ const loginUser = [
         )
 
         let user = null
-        const request = new sql.Request()
 
-        user = await (await request.query(`
-                EXEC Application.AccountLogin @Email = '${email}', @Password = '${password}';
-            `)
-        ).recordset[0]
+        const [rows] = await pool.execute(`
+            SELECT * FROM Account
+            WHERE Email = '${email}'
+            AND Password = SHA2('${password}', 256);
+        `)
+
+        user = rows[0]
+
         if (!user) {
             throw new ApiError(
                 StatusCodes.NOT_FOUND,
@@ -40,7 +43,6 @@ const loginUser = [
             { expiresIn: "1h"}
         )
 
-        // TODO: set as auth bearer header
         res.json({
             token,
         })

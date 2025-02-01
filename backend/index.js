@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const sql = require("mssql")
 const passport = require("passport")
 const { strategy } = require("./utils/passport")
 
@@ -17,7 +16,7 @@ app.use(passport.initialize());
 passport.use(strategy)
 app.use(cors({
     origin:[
-      'http://localhost:5173'
+      // `${CLOUDFRONT_URL}`
     ]
 
   }));
@@ -31,25 +30,8 @@ app.get('/health', (req, res) => {
 app.use(errorConverter)
 app.use(errorHandler)
 
-const sqlConfig = {
-    server: process.env.VM_SERVER_IP,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DATABASE,
-    port: parseInt(process.env.PORT),
-    options: {
-        trustServerCertificate: true,
-        connectTimeout: 30000
-    }
-}
 
-sql.connect(sqlConfig, err => {
-    if (err) {
-        throw err;
-    }
-    console.log("Connection Successful!");
-});
-
+// change to ip address of elastic load balancer EC2 auto-scaler link later
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+    console.log(`Backend server listening at http://localhost:${port}`);
 });
