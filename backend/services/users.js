@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken")
-const sql = require("mssql")
+const pool = require("../db")
 const { ApiError } = require("../utils/ApiError")
 const { StatusCodes } = require("http-status-codes")
 const asyncHandler = require("express-async-handler")
@@ -19,29 +19,21 @@ const createUser = [
         checkValidatorResults(req, res)
         const { email, password, name, phoneNum, address, age, accountType } = matchedData(req)
 
-        const json_data = {
-            email: email,
-            password: password,
-            name: name,
-            contact: phoneNum,
-            address: address,
-            age: age,
-            accountType: accountType
-        }
+        const [accountResult] = await pool.execute(
+            'INSERT INTO Account (Balance, Email, Password, AccountType) VALUES (?, ?, ?, ?);',
+            [0.00, email, password, accountType]
+        );
+        console.log(accountResult)
+        const accountID = accountResult.insertId;
 
-        await sql.query(`
-            EXEC Application.CreateAccounts
-            @Email = '${email}',
-            @Password = '${password}',
-            @Name = '${name}',
-            @Contact = '${phoneNum}',
-            @Age = ${age},
-            @Address = '${address}',
-            @AccountType = '${accountType}'
-            ;
-        `)
+        // insert accountID into person table alongside other info
+        await pool.execute(
+            'INSERT INTO Person (Name, Address, AccountID, Contact, Age) VALUES (?, ?, ?, ?, ?);',
+            [name, address, accountID, phoneNum, age]
+        );
 
-        res.status(StatusCodes.CREATED).json({"msg": "Account created!"})
+
+        res.status(StatusCodes.CREATED).json({"msg": "Account created!"})    
     })
 ]
 
@@ -55,16 +47,14 @@ const checkUserDetails = [
             throw new ApiError(StatusCodes.UNAUTHORIZED, "You can only view details of your own account")
         }
     
-        const request = new sql.Request();
-        request.input("CustomerID", sql.Int, customerID);
-    
-        const result = await request.execute("usp_GetCustomerInfoById");
-    
-        if (result.recordset.length === 0) {
+        const result = await pool.execute(`SELECT * FROM Person WHERE CustomerID = ${parseInt(customerID)};`);
+        console.log(result[0].length)
+        
+        if (result[0].length === 0) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Customer not found");
         }
     
-        res.status(StatusCodes.OK).json(result.recordset[0]);
+        res.status(StatusCodes.OK).json(result[0]);
     }
 
     )
@@ -80,15 +70,33 @@ const getTransactionHistory = [
             throw new ApiError(StatusCodes.UNAUTHORIZED, "You can only view details of your own account")
         }
 
-        const request = new sql.Request()
-        request.input("CustomerID", sql.Int, customerID)
-        const result = await request.execute("Transactions.GetHistoryByID")
-
-        if (result.recordset.length === 0) {
+        // my apolocheese to anyone who has to see this
+        const result = await pool.execute(`
+            SELECT 
+                pSender.Name AS SenderName,
+                pReceiver.Name AS ReceiverName,
+                t.TransactionAmount,
+                th.TransactionDate
+            FROM 
+                Transfers t
+            JOIN 
+                TransactionHistory th ON t.TransferID = th.TransferID
+            JOIN 
+                Account senderAccount ON t.SenderAccountID = senderAccount.AccountID
+            JOIN 
+                Person pSender ON senderAccount.AccountID = pSender.AccountID
+            JOIN 
+                Account receiverAccount ON t.ReceiverAccountID = receiverAccount.AccountID
+            JOIN 
+                Person pReceiver ON receiverAccount.AccountID = pReceiver.AccountID
+            WHERE 
+                t.SenderAccountID = ${parseInt(customerID)} OR t.ReceiverAccountID = ${parseInt(customerID)};
+        `);
+        if (result[0].length === 0) {
             res.status(StatusCodes.NOT_FOUND);
         }
 
-        res.status(StatusCodes.OK).json(result.recordset);
+        res.status(StatusCodes.OK).json(result[0]);
     })
 ]
 
