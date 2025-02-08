@@ -5,17 +5,17 @@ Parameters:
   VPCId:
     Description: "VPC ID for assignment-vpc"
     Type: AWS::EC2::VPC::Id
-    Default: vpc-069cb63e9147cfd93  # Replace with actual VPC ID
+    Default: vpc-080be7c66266eff2f  # Replace with actual VPC ID
 
   PublicSubnet1Id:
     Description: "Public Subnet 1 ID"
     Type: AWS::EC2::Subnet::Id
-    Default: subnet-06b18ddb3a32aa801  # Replace with actual Public Subnet ID
+    Default: subnet-0931c0e1f8bbf4b82  # Replace with actual Public Subnet ID
 
   PublicSubnet2Id:
     Description: "Public Subnet 2 ID"
     Type: AWS::EC2::Subnet::Id
-    Default: subnet-0505c44bf7524dde4  # Replace with actual Public Subnet ID
+    Default: subnet-061bafa946bf7c51e  # Replace with actual Public Subnet ID
 
   YourIpAddress:
     Description: "Your Public IP or wildcard to allow MySQL access"
@@ -57,6 +57,7 @@ Resources:
       DBInstanceClass: db.t3.small
       AllocatedStorage: 100
       StorageType: gp2
+      DBName: FinanceApp
       MasterUsername: admin
       MasterUserPassword: whatever # Set password here
       VPCSecurityGroups:
