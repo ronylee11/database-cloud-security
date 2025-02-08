@@ -9,14 +9,16 @@ const indexRouter = require("./routes/index.routes");
 const { errorConverter, errorHandler } = require('./utils/error');
 
 const app = express();
-const port = 3005;
+// const port = process.env.PORT || 3005;
+const port = 3005
 
 app.use(express.json())
 app.use(passport.initialize());
 passport.use(strategy)
 app.use(cors({
     origin:[
-      // `${CLOUDFRONT_URL}`
+      `${process.env.CLOUDFRONT_URL || null}`,
+      'http://localhost:80'
     ]
 
   }));

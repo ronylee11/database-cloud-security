@@ -3,11 +3,11 @@
 const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
-    host: process.env.AWS_MYSQL_ENDPOINT,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
+    host: process.env.RDS_HOSTNAME,
+    user: process.env.RDS_USERNAME,
+    password: process.env.RDS_PASSWORD,
     database: process.env.DATABASE,
-    port: parseInt(process.env.PORT),
+    port: parseInt(process.env.RDS_PORT),
 });
 
 module.exports = pool;
