@@ -10,8 +10,8 @@ const indexRouter = require("./routes/index.routes");
 const { errorConverter, errorHandler } = require('./utils/error');
 
 const app = express();
-// const port = process.env.PORT || 3005;
-const port = 3005
+const port = process.env.PORT || 3005;
+// const port = 3005
 
 app.use(express.json())
 app.use(passport.initialize());
@@ -25,8 +25,8 @@ app.use(cors({
 app.use("/api", indexRouter)
 
 app.get('/health', async (req, res) => {
-  const res = await pool.execute(`SELECT 1;`)
-  return res.json({ status: res });
+  const result = await pool.execute(`SELECT 1;`)
+  return res.json({ status: result });
 });
 
 // Error handlers so that the app doesnt crash everytime an error gets thrown
