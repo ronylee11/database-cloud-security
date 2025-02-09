@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const passport = require("passport")
 const { strategy } = require("./utils/passport")
+const pool = require("./db")
 
 require("dotenv").config()
 
@@ -16,16 +17,16 @@ app.use(express.json())
 app.use(passport.initialize());
 passport.use(strategy)
 app.use(cors({
-    origin:[
-      `${process.env.CLOUDFRONT_URL || null}`,
-      'http://localhost:80'
-    ]
-
+  origin: "*",
+  methods: ['GET', 'POST'],
+  allowedHeaders: ["Content-Type", "Authorization"]
+  
   }));
 app.use("/api", indexRouter)
 
-app.get('/health', (req, res) => {
-  return res.json({ status: 'UP' });
+app.get('/health', async (req, res) => {
+  const res = await pool.execute(`SELECT 1;`)
+  return res.json({ status: res });
 });
 
 // Error handlers so that the app doesnt crash everytime an error gets thrown
