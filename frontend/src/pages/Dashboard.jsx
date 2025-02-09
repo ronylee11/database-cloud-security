@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Flex, Heading, VStack, Box, Spinner, Text, Table, Thead, Tbody, Tfoot, Tr, Th, Td, TableCaption, TableContainer } from "@chakra-ui/react";
 import { jwtDecode } from "jwt-decode";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+import { API_BASE_URL } from '../../Constants'
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -39,7 +39,7 @@ const Dashboard = () => {
 
                     if (profileResponse.ok) {
                         const data = await profileResponse.json();
-                        setUserData(data);
+                        setUserData(data[0]);
                         console.log("User Data:", data);
                     } else {
                         console.error("Failed to fetch profile data");
@@ -92,12 +92,12 @@ const Dashboard = () => {
                 <Box>
                     <Heading>Dashboard</Heading>
                 </Box>
-                {userData && (
+                {userData !== null && (
                     <Box>
                         <Text>Welcome, {userData.Name}!</Text>
-                        <Text>Email: {userData.Email}</Text>
+                        <Text>Address: {userData.Address}</Text>
                         <Text>Contact: {userData.Contact}</Text>
-                        <Text>Account Type: {userData.AccountType}</Text>
+                        <Text>Age: {userData.Age}</Text>
                     </Box>
                 )}
         
@@ -117,7 +117,7 @@ const Dashboard = () => {
                                 <Tr key={index}>
                                     <Td>{transaction.SenderName}</Td>
                                     <Td>{transaction.ReceiverName}</Td>
-                                    <Td isNumeric>{transaction.TransactionAmount.toFixed(2)}</Td>
+                                    <Td isNumeric>{transaction.TransactionAmount}</Td>
                                     <Td>{new Date(transaction.TransactionDate).toLocaleDateString()}</Td>
                                 </Tr>
                             ))}

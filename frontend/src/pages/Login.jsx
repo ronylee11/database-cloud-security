@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { DarkModeToggler } from '../components/ui/toggler';
+import { API_BASE_URL } from '../../Constants'
 
 const Login = () => {
   const toast = useToast();
@@ -27,6 +28,7 @@ const Login = () => {
 
   async function fetchData(email, password) {
     try {
+      console.log(API_BASE_URL)
       
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",

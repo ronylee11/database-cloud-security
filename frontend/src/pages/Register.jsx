@@ -20,6 +20,8 @@ import {
 
 import { useNavigate } from "react-router-dom";
 
+import { API_BASE_URL } from '../../Constants'
+
 const Register = () => {
   const toast = useToast();
   const navigate = useNavigate();
