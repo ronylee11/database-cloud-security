@@ -20,8 +20,7 @@ const createUser = [
         const { email, password, name, phoneNum, address, age, accountType } = matchedData(req)
 
         const [accountResult] = await pool.execute(
-            'INSERT INTO Account (Balance, Email, Password, AccountType) VALUES (?, ?, ?, ?);',
-            [0.00, email, password, accountType]
+            `INSERT INTO Account (Balance, Email, Password, AccountType) VALUES (0.00, '${email}', SHA2('${password}', 256), '${accountType}');`,
         );
         console.log(accountResult)
         const accountID = accountResult.insertId;

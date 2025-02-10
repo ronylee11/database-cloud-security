@@ -18,8 +18,9 @@ app.use(passport.initialize());
 passport.use(strategy)
 app.use(cors({
   origin: "*",
-  methods: ['GET', 'POST'],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+  credentials: true
   
   }));
 app.use("/api", indexRouter)

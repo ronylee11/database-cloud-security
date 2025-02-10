@@ -1,3 +1,2 @@
-const API_BASE_URL = "http://44.211.226.204:3005"
-
+const API_BASE_URL = "https://dfzazy458ilur.cloudfront.net"
 export { API_BASE_URL }
